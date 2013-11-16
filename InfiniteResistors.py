@@ -1,13 +1,14 @@
 #InfiniteResistors.py
 #Authored by Nitin Shyamkumar (Github: nitinshyamk)
-#Last Updated 11/15/13 21:00
+#Last Updated 11/16/13
 
 """InfiniteResistors.py: 
 This module addresses the problem of the infinite grid of resistors. (See the
     readme file for more info)
-This module contains two classes, Node, and Grid. Grid is simply a class built
-to store nodes in an organized fashion and process data appropriately via the 
-Equalize method. 
+This module contains two classes, Node, and Grid. 
+Node is a simple object to store the voltage at each node.
+Grid stores nodes in an organized fashion and process data appropriately via the 
+Reset and Equalize methods. 
 The potential map can then be accessed using the method getPotentialMap in the 
 Grid class.
 """
@@ -16,8 +17,8 @@ class Node(object):
     """
     Node object represents a single point.
     Attributes:
-        _fixed: type bool, True if Voltage cannot change, False if it can
-        _volt: potential (represents V), float
+        fixed: type bool, True if Voltage cannot change, False if it can
+        volt: potential (represents V), float
     """
     def __init__(self, Fixed = False, Voltage = 0.0):
         self._fixed = Fixed
@@ -41,6 +42,7 @@ class Node(object):
 
     @volt.setter
     def volt(self,value):
+        """sets the value of self._volt"""
         assert (type(value)==float or type(value) == int),"volt setter method received non float type: "+str(value)
         self._volt = value
 
@@ -63,9 +65,9 @@ class Grid(object):
         _source: a single list of two ints that represents the point where current enters (potential is 1)
     Methods(non standard):
         Equalize: this method iterates through the entire grid, calculating the 
-            potential at each point based on the difference equation discussed in the paper.
+            potential at each point based on the difference equation noted in the Readme.
         Reset: resets all potentials of all nodes in the grid. Does NOT alter 
-            the source/drain or fixed attributes
+            the source/drain or fixed attributes of any node.
         getPotentialMap: returns a 2d list of the node potentials (organized, of course)
 
         ##### The following are helper methods, intended for use in the Equalize method #####
@@ -73,7 +75,7 @@ class Grid(object):
         _calcVolt: a method intended to be used iteratively - calculates the potential of a node 
             based on the voltages of its neighbors and then CHANGES the node attribute volt. 
             It returns the error(change).
-            **** Instead of having it determine error bounds, Equalize can then be altered 
+            **** Instead of having it determine error bounds, Equalize can then be called 
             as desired to change error bounds as needed.
 
     """
@@ -160,7 +162,14 @@ class Grid(object):
     # these methods (_getNeighbors and _calcVolt) are not intended to be publicly accessible methods
     def _getNeighbors(self, xpos, ypos):
         """Returns a list of the neighbors - direct reference, ie returns the ids
-        See definition of neighbors: Refine in readme.txt
+        definition of neighbors:
+
+        (m-1,n+1) (m,n+1) (m+1,n+1)
+        (m-1,n)   (m,n)   (m+1,n)
+        (m-1,n-1) (m,n-1) (m+1,n-1) 
+
+        For the node (m,n), only (m-1,n); (m+1,n); (m,n+1); and (m,n-1) are neighbors.
+
         Precondition: xpos and ypos must both be less than _sizex and _sizey respectively"""
         assert(type(xpos)==int and xpos<len(self._grid))
         assert(type(ypos)==int and ypos<len(self._grid[xpos]))
@@ -220,7 +229,7 @@ class Grid(object):
         neighbors = self._getNeighbors(xpos,ypos)
         old = self._grid[xpos][ypos].volt
 
-        #calculate voltage of neighbors using the difference equation - see paper linked in readme site
+        #calculate voltage of neighbors using the difference equation - see note in readme site
         accumulator = 0.0
         for i in range(len(neighbors)):
             accumulator+=neighbors[i].volt
@@ -257,7 +266,7 @@ class Grid(object):
         #this while loop should continue until there is no longer any error.
 
     def getPotentialMap(self):
-        """Returns a 2d list of the potentials of each node"""
+        """Returns a 2d list of the potentials of each node."""
         table = []
         for ii in range(self._sizex):
             column = []
