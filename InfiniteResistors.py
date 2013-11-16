@@ -2,13 +2,14 @@
 #Authored by Nitin Shyamkumar (Github: nitinshyamk)
 #Last Updated 11/15/13 21:00
 
-"""Documentation Improvements: 
+"""InfiniteResistors.py: 
 This module addresses the problem of the infinite grid of resistors. (See the
     readme file for more info)
 This module contains two classes, Node, and Grid. Grid is simply a class built
 to store nodes in an organized fashion and process data appropriately via the 
 Equalize method. 
-Currently a method for retreiving the data in an organized process is being created.
+The potential map can then be accessed using the method getPotentialMap in the 
+Grid class.
 """
 
 class Node(object):
@@ -65,6 +66,7 @@ class Grid(object):
             potential at each point based on the difference equation discussed in the paper.
         Reset: resets all potentials of all nodes in the grid. Does NOT alter 
             the source/drain or fixed attributes
+        getPotentialMap: returns a 2d list of the node potentials (organized, of course)
 
         ##### The following are helper methods, intended for use in the Equalize method #####
         _getNeighbors: returns the ids of the nodes in a list (can be as little as two, max of 4)
@@ -254,11 +256,14 @@ class Grid(object):
                         someErr = True
         #this while loop should continue until there is no longer any error.
 
-    def PrintPotentials(self):
+    def getPotentialMap(self):
+        """Returns a 2d list of the potentials of each node"""
+        table = []
         for ii in range(self._sizex):
             column = []
             for jj in range(self._sizey):
                 column.append(self._grid[ii][jj].volt)
-            print column
+            table.append(column)
+        return table
             
 
