@@ -6,6 +6,8 @@ proposed infinite grid of resistors has a simple difference equation in the form
  4*v_m,n = v_m-1,n + v_m,n-1 + v_m+1,n + v_m,n+1. This equation results from simple node
 analysis. The potential on this infinite grid can then be approximated by defining a grid of 
 nodes.
+The following website has a good summary of the problem and a more refined solution as well.
+http://www.mathpages.com/home/kmath668/kmath668.htm
 
 In this module, the problem is solved by normalizing the source potential to 1V and making
 each resistors resistance 1 ohm.
