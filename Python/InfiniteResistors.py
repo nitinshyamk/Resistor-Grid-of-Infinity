@@ -233,7 +233,7 @@ class Grid(object):
         accumulator = 0.0
         for i in range(len(neighbors)):
             accumulator+=neighbors[i].volt
-        accumulator = float(accumulator)/len(neighbors)
+        accumulator = float(accumulator)/4.0
 
         #now change the voltage of the node at (xpos,ypos)
         if not self._grid[xpos][ypos].fixed:
@@ -251,18 +251,16 @@ class Grid(object):
             for jj in range(self._sizey):
                 self._grid[ii][jj].volt = 0.0
 
-    def Equalize(self, err = 0.001):
+    def Equalize(self, iterations = 20):
         """This method iterates through the grid, changing each node potential 
         using the helper method _calcVolt. It uses the difference equation described
         in the Readme File."""
-        someErr = True
-        while someErr:
-            someErr = False
+        while iterations>0:
             for ii in range(self._sizex):
                 for jj in range(self._sizey):
                     returnErr = self._calcVolt(ii,jj)
-                    if returnErr > err:
-                        someErr = True
+                    #if returnErr > err: - delta error handling will be updated later.
+            iterations--;
         #this while loop should continue until there is no longer any error.
 
     def getPotentialMap(self):
