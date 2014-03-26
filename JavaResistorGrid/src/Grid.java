@@ -25,6 +25,7 @@ public class Grid {
 			g.Equalize();
 			g.PrintPotentialMap();
 		}
+		//square grid
 		else if (args.length == 1){
 			int size = -1;
 			try {
@@ -44,6 +45,7 @@ public class Grid {
 			g.PrintPotentialMap();
 			
 		}
+		//handles sources
 		else if (args.length == 2){
 			int width = -1, height = -1;
 			try {
@@ -63,6 +65,7 @@ public class Grid {
 			g.PrintPotentialMap();
 			
 		}
+		//handles most specific case
 		else if (args.length == 4){
 			int width = -1, height = -1; 
 			Grid g;
@@ -92,7 +95,9 @@ public class Grid {
 			throw new IllegalArgumentException(errInfo);
 		}
 	}
-	public static Position convert(String s){
+	
+	/**used to parse a position argument from a string**/
+	private static Position convert(String s){
 		s= s.trim(); int i = s.indexOf(',');
 		int row; int col;
 		try{
@@ -270,10 +275,13 @@ public class Grid {
 		volt = volt/i;
 		grid[r][c].setVoltage(volt);
 		return grid[r][c].getVoltage() - volt;
-
-		
 	}
 	
+	/**
+	 * iterates through the entire grid, and processes the potential.
+	 * Equalizes the entire grid in the process
+	 * @param iterations
+	 */
 	public void Equalize(int iterations){
 		int init = iterations;
 		while (iterations > 0){
@@ -290,10 +298,19 @@ public class Grid {
 		System.out.println("100% calculated");
 		
 	}
+	/**
+	 * iterates 30 times through the entire grid, and processes the potential.
+	 * Equalizes the entire grid in the process
+	 * @param iterations
+	 */
 	public void Equalize(){
 		Equalize(30);
 	}
 	
+	/**conveniently prints the potential value at each node
+	 * Can easily be printed to a txt file via cmdl and copied into Excel
+	 * (Though consider GUI for this purpose as well)
+	 */
 	public void PrintPotentialMap(){
 		if (width*height > 1600){
 			System.out.println("The table is too big to print");
@@ -312,4 +329,5 @@ public class Grid {
 			}
 		}
 	}
+	//class def ends
 }
