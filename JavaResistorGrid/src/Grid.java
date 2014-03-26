@@ -189,7 +189,7 @@ public class Grid {
 	}
 	
 	/**returns Node at row r, column c*/
-	private Node getNode(int r, int c) throws IllegalArgumentException{
+	public Node getNode(int r, int c) throws IllegalArgumentException{
 		if (r < 0 || r >= height || c < 0 || c >= width){
 			throw new IllegalArgumentException("bad position index/indices");
 		}
@@ -275,14 +275,20 @@ public class Grid {
 	}
 	
 	public void Equalize(int iterations){
+		int init = iterations;
 		while (iterations > 0){
 			for (int i = 0; i <= height-1; i++){
 				for (int j = 0; j <= width-1; j++){
 					if (!grid[i][j].isFixed()){adjustNodePotential(i, j);}
 				}
 			}
+			String record = Double.toString(100.0*(init - iterations)/init);
+			if (record.length() > 4){record = record.substring(0,5);}
+			System.out.println(record.substring(0) + "% calculated");
 			iterations--;
 		}
+		System.out.println("100% calculated");
+		
 	}
 	public void Equalize(){
 		Equalize(30);
