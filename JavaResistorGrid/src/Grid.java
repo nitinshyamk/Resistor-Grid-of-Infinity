@@ -6,6 +6,7 @@ import java.util.ArrayList;
 public class Grid {
 	private int width; private int height;
 	private Position drain; private Position source;
+	private ArrayList<Position> Sources;
 	private Node[][] grid;
 	
 	/**
@@ -21,7 +22,7 @@ public class Grid {
 				+ "and the second refers to the drain position.\n\n";
 		if (args.length == 0){
 			Grid g = new Grid(20,20);
-			g.setSource(10, 10); g.setDrain(10, 11);
+			g.addSource(10, 10); g.setDrain(10, 11);
 			g.Equalize();
 			g.PrintPotentialMap();
 		}
@@ -40,7 +41,7 @@ public class Grid {
 				throw new IllegalArgumentException("Invalid size arg.");
 			}
 			Grid g = new Grid(size,size);
-			g.setSource(size/2, size/2); g.setDrain(size/2 + 1, size/2 + 1);
+			g.addSource(size/2, size/2); g.setDrain(size/2 + 1, size/2 + 1);
 			g.Equalize();
 			g.PrintPotentialMap();
 			
@@ -60,7 +61,7 @@ public class Grid {
 				throw new IllegalArgumentException("Invalid size argument ");
 			}
 			Grid g = new Grid(width,height);
-			g.setSource(width/2, height/2); g.setDrain(width/2 + 1, height/2 + 1);
+			g.addSource(width/2, height/2); g.setDrain(width/2 + 1, height/2 + 1);
 			g.Equalize();
 			g.PrintPotentialMap();
 			
@@ -82,7 +83,7 @@ public class Grid {
 			try{
 				Position source = convert(args[2]);
 				Position drain = convert(args[3]);
-				g.setSource(source.r, source.c);
+				g.addSource(source.r, source.c);
 				g.setDrain(drain.r, drain.c);
 			}
 			catch (Exception e){
@@ -113,6 +114,7 @@ public class Grid {
 	
 	/**
 	 * constructor creates a node Grid with width w and height h
+	 * A drain is added at the bottom right corner, but no voltage sources are added.
 	 */
 	public Grid(int w, int h){
 		width = w; height = h;
@@ -122,9 +124,9 @@ public class Grid {
 				grid[i][j] = new Node();
 			}
 		}
-		source = new Position(0,0); drain = new Position(h-1, w-1);
+		drain = new Position(h-1, w-1);
 		grid[drain.r][drain.c].setDrain();
-		grid[source.r][source.c].setSource();
+		Sources = new ArrayList<Position>();
 
 	}
 	/**
@@ -147,12 +149,24 @@ public class Grid {
 	}
 	
 	/**
-	 * sets the node at row r and column c to the source
+	 * adds a source
 	 */
-	public void setSource(int r, int c){
-		grid[source.r][source.c].setDynamic();
-		source = new Position(r,c);
-		grid[source.r][source.c].setSource();
+	public void addSource(int r, int c){
+		this.addSource(new Position(r,c));
+	}
+	
+	private void addSource(Position p){
+		Sources.add(p);
+		grid[p.r][p.c].setSource();
+	}
+	
+	public void clearSources(){
+		for (Position p: Sources){
+			grid[p.r][p.c].setDynamic();
+		}
+		Sources = new ArrayList<Position>();
+		Equalize();
+		
 	}
 	
 	/**
@@ -166,17 +180,21 @@ public class Grid {
 		grid[drain.r][drain.c].setDrain();	
 	}
 	/**
-	 * returns a string describing source position
+	 * returns a string describing source position(s)
 	 */
 	public String tellSource(){
-		return source.toString();
+		String sourcePos = "";
+		for (Position p: Sources){
+			sourcePos += (p.toString() + " | ");
+		}
+		return sourcePos;
 	}
 	
 	/**
 	 * returns the source Position object
 	 */
-	protected Position getSource(){
-		return source;
+	protected ArrayList<Position> getSource(){
+		return Sources;
 	}
 	
 	/**

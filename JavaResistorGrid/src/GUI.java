@@ -20,6 +20,7 @@ import javax.swing.*;
 	 private static int CELL_SIZE;
 	 private static final Color INIT_COLOR = Color.black;
 	 private Grid g;
+	 private Cell[][] guiCells;
 	 
 	 /**
 	  * command line arguments
@@ -40,25 +41,44 @@ import javax.swing.*;
 			 System.out.println(info);
 		 }
 		 }
-		 else{s = 20; c  = 4;}
+		 else{s = 80; c  = 10;}
 		 WIDTH = s; HEIGHT = s;
 		 CELL_SIZE = c;
 		 System.setProperty("java.util.Arrays.useLegacyMergeSort", "true");
 		 	//line above to address bug in javax.swing package
-		 GUI grid = new GUI(); 
+		 GUI grid = new GUI();
 	 }
 	 
 	 /**
 	  * constructor
 	  */
 	 GUI(){
-		g = new Grid(WIDTH,HEIGHT);
-		g.setSource(WIDTH/2,HEIGHT/2);
-		g.setDrain(WIDTH/2 + 1, HEIGHT/2 + 1);
+		g = new Grid(HEIGHT,WIDTH);
+		guiCells = new Cell[HEIGHT][WIDTH];
+		//g.addSource(HEIGHT/2,WIDTH/2);
+		//g.addSource(HEIGHT/7, WIDTH-1);
+		//g.addSource(5*HEIGHT/7, WIDTH/5);
+		//g.addSource(5*HEIGHT/7, WIDTH/5);
+		g.addSource(3*HEIGHT/7, 3*WIDTH/4);
+		//g.addSource(2*HEIGHT/7, 1*WIDTH/4);
+		//g.addSource(6*HEIGHT/7, 4*WIDTH/5);
+		g.setDrain(HEIGHT/2, WIDTH/2);
+		g.addSource(HEIGHT/2 + 3, WIDTH/2 + 3);
+		g.addSource(HEIGHT/2 - 3, WIDTH/2 - 3);
+		g.addSource(HEIGHT/2 + 3, WIDTH/2 - 3);
+		g.addSource(HEIGHT/2 - 3, WIDTH/2 + 3);
+		//g.addSource(HEIGHT/2 + 5, WIDTH/2);
+		//g.addSource(HEIGHT/2 - 5, WIDTH/2);
+		g.addSource(HEIGHT/2, WIDTH/2+ 5);
+		g.addSource(HEIGHT/2, WIDTH/2 - 5);
+
+
+
+
 		g.Equalize();
 		System.out.println("Initializing Graphics"); //information
 		DisplayGrid.setSize(WIDTH*CELL_SIZE, HEIGHT*CELL_SIZE); //sets the size of the GUI (though it can be resized)
-		DisplayGrid.setTitle("Resistor Grid: Potential MAP");
+		DisplayGrid.setTitle("Resistor Grid: Potential Map");
 		DisplayGrid.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		Container displaypane = DisplayGrid.getContentPane();
 		displaypane.setLayout(new GridLayout(WIDTH, HEIGHT));
@@ -70,12 +90,24 @@ import javax.swing.*;
 			if (x == 3*WIDTH*HEIGHT/4){System.out.println("75% finished");}
 			Position pos = new Position(x/WIDTH, x%WIDTH);
 			Cell c = new Cell(pos);
+			guiCells[pos.r][pos.c] = c;
 	        displaypane.add(c);
 	    }
-		System.out.println("100% finished");
+		System.out.println("Graphics model initialized");
 		DisplayGrid.setVisible(true);
 		 
 	 }
+	 
+	 /**updates GUI**/
+	 public void updateGraphics(){
+		 g.Equalize(40);
+		 for (int i = 0; i<HEIGHT; i++){
+			 for (int j = 0; j<WIDTH; j++){
+				 guiCells[i][j].updateColor(new Position(i,j));
+			 }
+		 }
+	 }
+	 
 	 
 	 /**
 	  * a single instance is a cell that represents one node
@@ -86,9 +118,15 @@ import javax.swing.*;
 			percentage = percentage*0.8;
 			this.setBackground(Color.getHSBColor((float) percentage, 1, 1));
 			//this.setBackground(new Color(colorval, colorval, colorval));
-			this.setPreferredSize(new Dimension (2,2));
+			this.setPreferredSize(new Dimension (CELL_SIZE,CELL_SIZE));
+		 }
+		 public void updateColor(Position pos){
+			 double percentage = g.getNode(pos.r, pos.c).getVoltage()/10.0;
+				percentage = percentage*0.8;
+				this.setBackground(Color.getHSBColor((float) percentage, 1, 1));
+				//this.setBackground(new Color(colorval, colorval, colorval));
+				this.setPreferredSize(new Dimension (CELL_SIZE,CELL_SIZE));
 		 }
 	 }
-	 
 
 }

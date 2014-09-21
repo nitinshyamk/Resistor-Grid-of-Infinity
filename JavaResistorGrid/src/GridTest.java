@@ -24,7 +24,6 @@ public class GridTest {
 		//System.out.println(g.getNode(67, 3).getVoltage());
 
 		
-		g.setSource(32, 5);
 		assertEquals("(32, 5)", g.tellSource());
 		//assertEquals(false, g.getNode(0, 0).isFixed());
 		//assertEquals(true, g.getNode(32, 5).isFixed());
@@ -55,7 +54,6 @@ public class GridTest {
 	@Test
 	public void testCalculatingFunctions(){
 		Grid g = new Grid(20,20);
-		g.setSource(10, 10);
 		g.setDrain(10, 11);
 		g.Equalize();
 		g.PrintPotentialMap();
